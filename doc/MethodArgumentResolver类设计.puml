@@ -1,4 +1,8 @@
 @startuml
 
-Class01 <|-- Class02
+interface MethodArgumentResolver
+abstract  AbstractMessageConverterMethodArgumentResolver
+MethodArgumentResolver <|... AbstractMessageConverterMethodArgumentResolver
+
+
 @enduml

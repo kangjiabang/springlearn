@@ -1,0 +1,60 @@
+@startuml
+
+
+interface NamespaceHandler
+abstract NamespaceHandlerSupport
+class  AopNamespaceHandler
+class  DubboNamespaceHandler
+interface NamespaceHandlerResolver
+class  DefaultNamespaceHandlerResolver
+
+interface BeanDefinitionParser
+
+
+NamespaceHandlerResolver <|.. DefaultNamespaceHandlerResolver
+NamespaceHandler  <|.. NamespaceHandlerSupport
+NamespaceHandlerSupport <|-- AopNamespaceHandler
+NamespaceHandlerSupport <|-- DubboNamespaceHandler
+DefaultNamespaceHandlerResolver --> "*" NamespaceHandler
+NamespaceHandlerSupport  --> "*" BeanDefinitionParser
+
+BeanDefinitionParser  <|.. ConfigBeanDefinitionParser
+BeanDefinitionParser  <|.. AspectJAutoProxyBeanDefinitionParser
+BeanDefinitionParser  <|.. ScopedProxyBeanDefinitionDecorator
+BeanDefinitionParser  <|.. SpringConfiguredBeanDefinitionParser
+
+interface NamespaceHandler {
+  void init();
+}
+
+class AopNamespaceHandler {
+  void init() {
+
+  		registerBeanDefinitionParser("config", new ConfigBeanDefinitionParser());
+
+
+  	};
+}
+interface NamespaceHandlerResolver {
+    NamespaceHandler resolve(String namespaceUri);
+}
+
+interface BeanDefinitionParser {
+   BeanDefinition parse(Element element, ParserContext parserContext)
+}
+
+
+class NamespaceHandlerSupport {
+   Map<String, BeanDefinitionParser> parsers;
+
+   void registerBeanDefinitionParser(String elementName, BeanDefinitionParser parser);
+}
+class DefaultNamespaceHandlerResolver {
+   String DEFAULT_HANDLER_MAPPINGS_LOCATION = "META-INF/spring.handlers";
+
+   /** mappings from namespace URI to NamespaceHandler */
+   Map<String, Object> handlerMappings;
+}
+
+
+@enduml
